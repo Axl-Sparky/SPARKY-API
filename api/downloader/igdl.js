@@ -9,23 +9,16 @@ module.exports = async (req, res) => {
             });
         }
 
-        const response = await fetch(
-            `https://snapinsta.app/action.php?lang=en`,
-            {
-                method: "POST",
-                headers: {
-                    "content-type": "application/x-www-form-urlencoded"
-                },
-                body: `url=${encodeURIComponent(url)}`
-            }
+        const api = await fetch(
+            `https://www.save-free.com/process?url=${encodeURIComponent(url)}`
         );
 
-        const html = await response.text();
+        const data = await api.text();
 
-        const match = html.match(/https?:\/\/[^"]+\.mp4[^"]*/);
+        const match = data.match(/https?:\/\/[^"]+\.mp4[^"]*/);
 
         if (!match) {
-            return res.json({
+            return res.status(404).json({
                 success: false,
                 message: "No media found"
             });
