@@ -2,6 +2,6 @@
   "name": "sparky-api",
   "version": "1.0.0",
   "dependencies": {
-    "@sasmeee/igdl": "^1.0.3"
+    "instagram-url-direct": "^1.0.14"
   }
 }
