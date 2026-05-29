@@ -1,3 +1,5 @@
+const igdl = require("@sasmeee/igdl");
+
 module.exports = async (req, res) => {
     try {
         const { url } = req.query;
@@ -9,15 +11,9 @@ module.exports = async (req, res) => {
             });
         }
 
-        const api = await fetch(
-            `https://www.save-free.com/process?url=${encodeURIComponent(url)}`
-        );
+        const data = await igdl(url);
 
-        const data = await api.text();
-
-        const match = data.match(/https?:\/\/[^"]+\.mp4[^"]*/);
-
-        if (!match) {
+        if (!data || !data.data || data.data.length === 0) {
             return res.status(404).json({
                 success: false,
                 message: "No media found"
@@ -27,12 +23,10 @@ module.exports = async (req, res) => {
         res.status(200).json({
             success: true,
             creator: "Ajsal Sparky",
-            result: [
-                {
-                    type: "video",
-                    url: match[0]
-                }
-            ]
+            result: data.data.map(v => ({
+                type: v.type || "video",
+                url: v.url
+            }))
         });
 
     } catch (err) {
