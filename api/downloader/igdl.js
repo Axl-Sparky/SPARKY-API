@@ -1,5 +1,3 @@
-const { default: instagramGetUrl } = require("instagram-url-direct");
-
 module.exports = async (req, res) => {
     try {
         const { url } = req.query;
@@ -11,10 +9,23 @@ module.exports = async (req, res) => {
             });
         }
 
-        const result = await instagramGetUrl(url);
+        const response = await fetch(
+            `https://snapinsta.app/action.php?lang=en`,
+            {
+                method: "POST",
+                headers: {
+                    "content-type": "application/x-www-form-urlencoded"
+                },
+                body: `url=${encodeURIComponent(url)}`
+            }
+        );
 
-        if (!result || result.length === 0) {
-            return res.status(404).json({
+        const html = await response.text();
+
+        const match = html.match(/https?:\/\/[^"]+\.mp4[^"]*/);
+
+        if (!match) {
+            return res.json({
                 success: false,
                 message: "No media found"
             });
@@ -26,7 +37,7 @@ module.exports = async (req, res) => {
             result: [
                 {
                     type: "video",
-                    url: result[0].url
+                    url: match[0]
                 }
             ]
         });
