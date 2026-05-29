@@ -1,8 +1,8 @@
-const igdl = require("@sasmeee/igdl");
+const ig = require("instagram-url-direct");
 
 module.exports = async (req, res) => {
     try {
-        const { url } = req.query;
+        let { url } = req.query;
 
         if (!url) {
             return res.status(400).json({
@@ -11,10 +11,12 @@ module.exports = async (req, res) => {
             });
         }
 
-        const data = await igdl(url);
+        url = url.split("?")[0];
 
-        if (!data || !data.data || data.data.length === 0) {
-            return res.status(404).json({
+        const result = await ig(url);
+
+        if (!result || result.length === 0) {
+            return res.json({
                 success: false,
                 message: "No media found"
             });
@@ -23,8 +25,8 @@ module.exports = async (req, res) => {
         res.status(200).json({
             success: true,
             creator: "Ajsal Sparky",
-            result: data.data.map(v => ({
-                type: v.type || "video",
+            result: result.map(v => ({
+                type: "video",
                 url: v.url
             }))
         });
@@ -36,3 +38,5 @@ module.exports = async (req, res) => {
         });
     }
 };
+
+
