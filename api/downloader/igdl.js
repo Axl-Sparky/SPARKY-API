@@ -1,4 +1,4 @@
-const instagramGetUrl = require("instagram-url-direct");
+const { default: instagramGetUrl } = require("instagram-url-direct");
 
 module.exports = async (req, res) => {
     try {
